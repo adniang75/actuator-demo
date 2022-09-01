@@ -1,0 +1,29 @@
+# my global config
+global:
+    scrape_interval: 15s # set the scrape interval to every 15s. Default is every 1 minute.
+    evaluation_interval: 15s # evaluate rules every 15 seconds. The default is every 1 minute.
+    # scrape_timeout is set to the global default (10s).
+
+# load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+# - "first_rules.yml"
+# - "second_rules.yml"
+
+# a scrape configuration containing exactly one endpoint
+# here, it is Prometheus itself.
+scrape_configs:
+    # the job name is added as alerting:  label `job=<job_name>` to any timeseries scraped from this config.
+    -   job_name: 'prometheus'
+        # metrics_path defaults to '/metrics'
+        # scheme defaults to 'http'
+        static_configs:
+            -   targets: [ '127.0.0.1:9090' ]
+
+    -   job_name: 'spring-actuator'
+        metrics_path: '/actuator/prometheus'
+        scrape_interval: 5s
+        static_configs:
+            -   targets: [ '192.168.1.20:8080' ] # IP address of the machine running the Spring Boot Application
+
+# and run prometheus using Docker in the same folder containing this file
+# docker run -d --name=prometheus -p 9090:9090 -v <PATH_TO_prometheus.yml_FILE>:/etc/prometheus/prometheus.yml prom/prometheus --config.file=/etc/prometheus/prometheus.yml
